@@ -56,7 +56,7 @@
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_MAINCK_24M_RC
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_MAINCK_XTAL
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_MAINCK_BYPASS
-#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_PLLACK
+#define CONFIG_SYSCLK_SOURCE          SYSCLK_SRC_MAINCK_8M_RC
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_PLLBCK
 
 // ===== System Clock (MCK) Prescaler Options   (Fmck = Fsys / (SYSCLK_PRES))
@@ -69,16 +69,29 @@
 //#define CONFIG_SYSCLK_PRES          SYSCLK_PRES_64
 //#define CONFIG_SYSCLK_PRES          SYSCLK_PRES_3
 
+#define USING_XTAL 0
+#define USE_CALIBRATED_RC 1
+
 // ===== PLL0 (A) Options   (Fpll = (Fclk * PLL_mul) / PLL_div)
 // Use mul and div effective values here.
-#define CONFIG_PLL0_SOURCE          PLL_SRC_SLCK_XTAL
-#define CONFIG_PLL0_MUL             2930
+#if USING_XTAL
+	#define CONFIG_PLL0_SOURCE          PLL_SRC_SLCK_XTAL
+	#define CONFIG_PLL0_MUL             2930 //mainck: 2930 * 32768 = 96010240 Hz
+#else
+	#define CONFIG_PLL0_SOURCE          PLL_SRC_SLCK_RC //PLL_SRC_SLCK_XTAL PLL_SRC_SLCK_RC
+	#define CONFIG_PLL0_MUL             3000 // 96mhz = 3000 * 32khz RC
+#endif
 #define CONFIG_PLL0_DIV             1
 
 // ===== PLL1 (B) Options   (Fpll = (Fclk * PLL_mul) / PLL_div)
 // Use mul and div effective values here.
-#define CONFIG_PLL1_SOURCE          PLL_SRC_SLCK_XTAL
-#define CONFIG_PLL1_MUL             1465
+#if USING_XTAL
+	#define CONFIG_PLL1_SOURCE          PLL_SRC_SLCK_XTAL
+	#define CONFIG_PLL1_MUL             1465
+#else
+	#define CONFIG_PLL1_SOURCE          PLL_SRC_SLCK_RC
+	#define CONFIG_PLL1_MUL             1000 //1500=48mhz/32kHz //1649 // 1581 = 46mhz / 29100 hertz unique id
+#endif
 #define CONFIG_PLL1_DIV             1
 
 // ===== USB Clock Source Options   (Fusb = FpllX / USB_div)

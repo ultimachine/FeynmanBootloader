@@ -48,6 +48,9 @@
 #include <supc.h>
 #include <efc.h>
 
+//FEYNMAN - SAMG55 Crystal-less operation
+#include "read_unique_id.h"
+
 /// @cond 0
 /**INDENT-OFF**/
 #ifdef __cplusplus
@@ -157,7 +160,17 @@ void sysclk_enable_usb(void)
 		struct pll_config pllcfg;
 
 		pll_enable_source(CONFIG_PLL1_SOURCE);
-		pll_config_defaults(&pllcfg, 1);
+		//FEYNMAN - Crystal-less USB operation by setting MUL to calibrated value
+		// http://www.atmel.com/Images/Atmel-44085-32-bit-Cortex-M4-Microcontroller-SAM-G55-Crystal-less-USB-Operation_Application-note.pdf
+		//if (CONFIG_USBCLK_SOURCE == PLL_SRC_SLCK_RC) {
+		if(USE_CALIBRATED_RC) {
+			//uint32_t hertz_3v3_25celsius = get_internalRC();
+			uint32_t multiplier = (48000000 / read_uniqueid_rc32_3v3());
+			pll_config_init(&pllcfg,PLL_SRC_SLCK_RC,1,multiplier); // div=1
+		} else {
+			pll_config_defaults(&pllcfg, 1);
+		}
+		
 		pll_enable(&pllcfg, 1);
 		pll_wait_for_lock(1);
 #ifdef UHD_ENABLE
@@ -259,7 +272,16 @@ void sysclk_init(void)
 		struct pll_config pllcfg;
 
 		pll_enable_source(CONFIG_PLL1_SOURCE);
-		pll_config_defaults(&pllcfg, 1);
+		//FEYNMAN - Crystal-less USB operation by setting MUL to calibrated value
+		// http://www.atmel.com/Images/Atmel-44085-32-bit-Cortex-M4-Microcontroller-SAM-G55-Crystal-less-USB-Operation_Application-note.pdf
+		//if (CONFIG_USBCLK_SOURCE == PLL_SRC_SLCK_RC) {
+		if(USE_CALIBRATED_RC) {
+			//uint32_t hertz_3v3_25celsius = get_internalRC();
+			uint32_t multiplier = (48000000 / read_uniqueid_rc32_3v3());
+			pll_config_init(&pllcfg,PLL_SRC_SLCK_RC,1,multiplier); // div=1
+		} else {
+			pll_config_defaults(&pllcfg, 1);
+		}
 		pll_enable(&pllcfg, 1);
 		pll_wait_for_lock(1);
 		pmc_switch_mck_to_pllbck(CONFIG_SYSCLK_PRES);

@@ -605,6 +605,12 @@
     <Compile Include="src\conf_bootloader.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\read_unique_id.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\read_unique_id.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sam_ba_monitor.c">
       <SubType>compile</SubType>
     </Compile>

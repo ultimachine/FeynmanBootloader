@@ -24,6 +24,7 @@ static volatile bool main_b_cdc_enable = false;
  #define BOOT_DOUBLE_TAP_ADDRESS           (IRAM_ADDR + IRAM_SIZE - 4)
  #define BOOT_DOUBLE_TAP_DATA              (*((volatile uint32_t *) BOOT_DOUBLE_TAP_ADDRESS))
 
+static void mdelay(uint32_t ul_dly_ticks);
 /**
  * \brief Check the application startup condition
  *
@@ -85,9 +86,11 @@ static void check_start_application(void)
 			* The loop value is based on SAMD21 default 1MHz clock @ reset.
 			*/
 		// SAM4E MAINCK is 4 Mhz after after reset.
-		for (uint32_t i=0; i<(125000*4); i++) /* 500ms */
+		//for (uint32_t i=0; i<(125000*4); i++) /* 500ms */ //125000*4
+		//for (uint32_t i=(SystemCoreClock/2); i; i--) /* 500ms */
+		mdelay(500);
 			/* force compiler to not optimize this... */
-			__asm__ __volatile__("");
+			//__asm__ __volatile__("");
 
 		/* Timeout happened, continue boot... */
 		BOOT_DOUBLE_TAP_DATA = 0;
@@ -121,9 +124,17 @@ static void mdelay(uint32_t ul_dly_ticks)
 
 int main (void)
 {
+	WDT->WDT_MR = WDT_MR_WDDIS;
+	
+	/* Initialize the SAM system */
+	sysclk_init();
 	//board_init();
 
-	WDT->WDT_MR = WDT_MR_WDDIS;
+	//SystemInit();
+	//SystemCoreClockUpdate();
+	
+	//if (SysTick_Config(SystemCoreClock / 1000)) { while (1); } // Set Systick to 1ms interval, common to all SAM3 variants
+	SysTick_Config(SystemCoreClock / 1000);
 
 	check_start_application();
 
@@ -131,8 +142,6 @@ int main (void)
 
 	//system_init_flash(120000000);
 	flash_init(FLASH_ACCESS_MODE_128, 5);  //Max FWS (flash wait state) value is 5 for SAMG55 - allows 120Mhz read timings using 6 cycles
-
-	if (SysTick_Config(SystemCoreClock / 1000)) { while (1); } // Set Systick to 1ms interval, common to all SAM3 variants
 
 	BLINK_PORT->PIO_OER = BLINK_PIN;
 
