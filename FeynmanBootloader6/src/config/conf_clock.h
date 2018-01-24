@@ -69,14 +69,14 @@
 //#define CONFIG_SYSCLK_PRES          SYSCLK_PRES_64
 //#define CONFIG_SYSCLK_PRES          SYSCLK_PRES_3
 
-#define USING_XTAL 0
-#define USE_CALIBRATED_RC 1
+#define USING_XTAL 1
+#define USE_CALIBRATED_RC 0
 
 // ===== PLL0 (A) Options   (Fpll = (Fclk * PLL_mul) / PLL_div)
 // Use mul and div effective values here.
 #if USING_XTAL
 	#define CONFIG_PLL0_SOURCE          PLL_SRC_SLCK_XTAL
-	#define CONFIG_PLL0_MUL             2930 //mainck: 2930 * 32768 = 96010240 Hz
+	#define CONFIG_PLL0_MUL             3226 //2930 //mainck: 2930 * 32768 = 96010240 Hz
 #else
 	#define CONFIG_PLL0_SOURCE          PLL_SRC_SLCK_RC //PLL_SRC_SLCK_XTAL PLL_SRC_SLCK_RC
 	#define CONFIG_PLL0_MUL             3000 // 96mhz = 3000 * 32khz RC
