@@ -64,7 +64,7 @@
 
 //! USB Device string definitions (Optional)
 #define  USB_DEVICE_MANUFACTURE_NAME      "ATMEL ASF"
-#define  USB_DEVICE_PRODUCT_NAME          "CDC Virtual Com"
+#define  USB_DEVICE_PRODUCT_NAME          "FeynmanBootloader "
 // #define  USB_DEVICE_SERIAL_NAME           "12...EF"
 
 
